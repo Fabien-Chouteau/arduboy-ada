@@ -1,0 +1,11 @@
+name = "example"
+description = "Shiny new project"
+version = "0.1.0-dev"
+
+executables = ["example"]
+
+[[depends-on]]
+arduboy = "*"
+
+[[pins]]
+arduboy = { path = '..' }

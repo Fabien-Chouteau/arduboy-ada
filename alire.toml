@@ -1,0 +1,18 @@
+name = "arduboy"
+description = "Ada Framework for the Arduboy game console"
+version = "0.1.0-dev"
+website = "https://github.com/Fabien-Chouteau/arduboy-ada"
+tags = ["gamedev", "console", "videogame", "embedded"]
+licenses = "BSD-3-Clause"
+authors = ["Fabien Chouteau"]
+maintainers = ["Fabien Chouteau <fabien.chouteau@gmail.com>"]
+maintainers-logins = ["Fabien-Chouteau"]
+
+[[depends-on]]
+avrada_mcu = "^2.2.0"
+avrada_lib = "^2.1.0"
+gnat_avr_elf = "^12"
+
+[configuration.values]
+avrada_rts.AVR_MCU = "atmega32u4"
+avrada_rts.Clock_Frequency = 16000000
