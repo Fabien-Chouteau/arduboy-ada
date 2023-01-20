@@ -9,3 +9,7 @@ arduboy = "*"
 
 [[pins]]
 arduboy = { path = '..' }
+
+[[actions]]
+type = "post-build"
+command = ["avr-objcopy", "-O", "ihex", "bin/example.elf", "bin/example.hex"]

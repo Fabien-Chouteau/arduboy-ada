@@ -17,11 +17,6 @@ Build with [Alire](https://alire.ada.dev):
 $ alr build
 ```
 
-Create a `.hex` file:
-```console
-$ alr exec -- avr-objcopy -O ihex bin/example.elf
-```
-
 Run the `.hex` in an emulator or on the Arduboy.
 For instance with RetroArch and [arduous](https://github.com/libretro/arduous):
 ```console
