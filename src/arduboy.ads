@@ -10,6 +10,7 @@ is
    Screen_Height : constant := 64;
 
    function Clock_Ms return Unsigned_32;
+   procedure Delay_Ms (Count : Unsigned_16);
 
    procedure Idle;
 
@@ -23,8 +24,6 @@ private
        of Interfaces.Unsigned_8;
 
    procedure Paint_Screen (FB : in out Framebuffer; Clear : Boolean := False);
-
-   procedure Delay_Short (Count : Unsigned_16);
 
    procedure OLED_Send_Command (Cmd : Unsigned_8);
 

@@ -102,7 +102,7 @@ package body Arduboy.Buttons is
    procedure Wait_No_Buttons is
    begin
       loop
-         Delay_Short (50);
+         Delay_Ms (50);
          exit when Buttons_State = 0;
       end loop;
    end Wait_No_Buttons;

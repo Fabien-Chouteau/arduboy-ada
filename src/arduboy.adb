@@ -95,14 +95,14 @@ package body Arduboy is
       return Result;
    end Clock_Ms;
 
-   -----------------
-   -- Delay_Short --
-   -----------------
+   --------------
+   -- Delay_Ms --
+   --------------
 
-   procedure Delay_Short (Count : Unsigned_16) is
+   procedure Delay_Ms (Count : Unsigned_16) is
    begin
         Busy_Wait_Ms (Count);
-   end Delay_Short;
+   end Delay_Ms;
 
    --------------
    -- Set_Mask --
@@ -235,9 +235,9 @@ package body Arduboy is
    procedure Boot_OLED is
    begin
       --  reset the display
-      Delay_Short (5); -- reset pin should be low here. let it stay low a while
+      Delay_Ms (5); -- reset pin should be low here. let it stay low a while
       Set_Mask (OLED_Rst_Port, OLED_Rst_Mask); -- set high to come out of reset
-      Delay_Short (5); -- wait a while
+      Delay_Ms (5); -- wait a while
 
       --  select the display (permanently, since nothing else is using SPI)
       Clear_Mask (OLED_CS_PORT, OLED_CS_Mask);
