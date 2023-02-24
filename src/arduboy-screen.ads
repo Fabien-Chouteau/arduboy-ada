@@ -104,4 +104,9 @@ is
    procedure Boot_Logo;
    --   Display the boot logo sequence
 
+   subtype Char_Size is Integer_16 range 1 .. 16;
+   procedure Draw_Char (Pt   : Point;
+                        C    : Character;
+                        On   : Boolean := True;
+                        Size : Char_Size := 1);
 end Arduboy.Screen;

@@ -1,3 +1,4 @@
+with Arduboy.Font;
 with AVR.Programspace;
 
 package body Arduboy.Screen is
@@ -630,5 +631,79 @@ package body Arduboy.Screen is
          Delay_Ms (30);
       end loop;
    end Boot_Logo;
+
+   ---------------
+   -- Draw_Char --
+   ---------------
+
+   procedure Draw_Char (Pt   : Point;
+                        C    : Character;
+                        On   : Boolean := True;
+                        Size : Char_Size := 1)
+   is
+      use Arduboy.Font;
+      Column : Unsigned_8;
+
+      Index : constant Unsigned_16 :=
+        C'Enum_Rep * Char_Width  * (((Char_Height + 8 - 1) / 8));
+
+      Bitmap_Addr : Avr.Programspace.Program_Address :=
+        Font.Bitmap (Index)'Address;
+
+      procedure Plop (Int : Integer) is
+         Line_Str : String (1 .. 10) := (others => '0');
+         L : Integer := Int;
+         Index : Integer := Line_Str'Last;
+      begin
+         while L > 0 loop
+            Line_Str (Index) :=
+              Character'Enum_Val (Character'Enum_Rep ('0') + L mod 10);
+            L := L / 10;
+            Index := Index - 1;
+         end loop;
+         Put (Line_Str);
+         Put (ASCII.LF);
+      end Plop;
+
+   begin
+      for I in Integer_16 range 0 .. Full_Char_Width - 1 loop
+         if Char_Height <= 8 and then I < Char_Width then
+            Column := Avr.Programspace.Get (Bitmap_Addr);
+            AVR.Programspace.Inc (Bitmap_Addr);
+         else
+            Column := 0;
+         end if;
+
+         --  Draw the character by columns. Top to bottom, left to right
+         --  including character spacing on the right
+         for J in Integer_16 range 0 .. Char_Height - 1 loop
+            if Char_Height > 8 then
+               --  at this point variable "column" will be 0, either from
+               --  initialization or by having eight 0 bits shifted in by
+               --  the >>= operation below
+               if ((J mod 8) = 0) and then I < Char_Width then
+                  Column := Avr.Programspace.Get (Bitmap_Addr);
+                  AVR.Programspace.Inc (Bitmap_Addr);
+               end if;
+            end if;
+
+            declare
+               Pixel_Is_Set : constant Boolean := (Column and 16#01#) /= 0;
+            begin
+               for A in 1 .. Size loop
+                  for B in 1 .. Size loop
+                     Draw_Pixel ((Pt.X + (I * Size) + A,
+                                 Pt.Y + (J * Size) + B),
+                                 On and then Pixel_Is_Set);
+                  end loop;
+               end loop;
+            end;
+
+            Column := Shift_Right (Column, 1);
+
+         end loop;
+
+      end loop;
+   end Draw_Char;
 
 end Arduboy.Screen;
