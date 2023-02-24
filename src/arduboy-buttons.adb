@@ -95,6 +95,18 @@ package body Arduboy.Buttons is
        and then
          ((Current_Buttons_State and Button'Enum_Rep) = 0));
 
+   ----------------------
+   -- Wait_Any_Buttons --
+   ----------------------
+
+   procedure Wait_Any_Buttons is
+   begin
+      loop
+         Delay_Ms (50);
+         exit when Buttons_State /= 0;
+      end loop;
+   end Wait_Any_Buttons;
+
    ---------------------
    -- Wait_No_Buttons --
    ---------------------

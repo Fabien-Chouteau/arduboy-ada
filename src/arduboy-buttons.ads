@@ -18,7 +18,7 @@ is
    --  Test if any of the specified buttons is pressed
 
    function None_Pressed (Button_Mask : Unsigned_8) return Boolean;
-   --  Test if none of thd specified buttons are presed
+   --  Test if none of thd specified buttons are pressed
 
    procedure Poll_Buttons;
    --  Poll the buttons and track their state over time.
@@ -59,6 +59,13 @@ is
    --  There aren't many cases where this function would be needed. Wanting to
    --  know if a button has been released, without knowing when it was pressed,
    --  is uncommon.
+
+   procedure Wait_Any_Buttons;
+   --  Wait until any button  is pressed.
+   --
+   --  It won't return unless at least one button is being pressed. A short
+   --  delay is performed each time before testing the state of the buttons
+   --  to do a simple button debounce.
 
    procedure Wait_No_Buttons;
    --  Wait until all buttons have been released.
