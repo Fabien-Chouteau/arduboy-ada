@@ -1,0 +1,20 @@
+name = "spark_tetris"
+description = "Proven Tetris"
+version = "0.1.0-dev"
+
+executables = ["spark_tetris"]
+
+[[depends-on]]
+arduboy = "*"
+
+[[pins]]
+arduboy = { path = '..' }
+
+[[actions]]
+type = "post-build"
+command = ["avr-objcopy", "-O", "ihex", "bin/spark_tetris.elf", "bin/spark_tetris.hex"]
+
+[build-switches]
+"*".ada_version = "ada2022"
+[[depends-on]]
+gnatprove = "^12.1.1"
