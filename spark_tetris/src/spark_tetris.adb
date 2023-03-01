@@ -25,7 +25,11 @@ procedure Spark_Tetris is
    procedure Draw_Board (With_Piece : Boolean);
    --  Draw on the OLED screen the board and the falling piece
 
-   function Random_Piece return Piece;
+   --  Simple random generator.
+   Rnd : Unsigned_32 := 137;
+
+   procedure Random_Piece (Nbr : in out Unsigned_32; P : out Piece)
+     with Post => Piece_Within_Board (P);
    --  Generate a new random piece
 
    Next_Piece : Piece;
@@ -161,17 +165,27 @@ procedure Spark_Tetris is
    -- Random_Piece --
    ------------------
 
-   --  Simple random generator.
-   Rnd : Unsigned_32 := 137;
-
-   function Random_Piece return Piece is
+   procedure Random_Piece (Nbr : in out Unsigned_32; P : out Piece) is
    begin
-      Rnd := Rnd * 1103515245 + 12345;
-      return (S => Cell'Val (1 + ((Rnd / 65536) mod 7)),
-              D => North,
-              X => X_Size / 2,
-              Y => Y_Coord'First);
+      Nbr := Nbr * 1103515245 + 12345;
+      P := (S => Cell'Val (1 + ((Nbr / 65536) mod 7)),
+            D => North,
+            X => X_Size / 2,
+            Y => Y_Coord'First);
    end Random_Piece;
+
+   ----------------
+   -- Reset_Game --
+   ----------------
+
+   procedure Reset_Game is
+   begin
+      Cur_Board := [others => [others => Empty]];
+      Score := 0;
+      Level_Nbr := 0;
+      Line_Counter := 0;
+      Rnd := Arduboy.Clock_Ms;
+   end Reset_Game;
 
    type Game_State is (Pre_Game, New_Piece, Piece_Fall, Game_Over);
 
@@ -186,7 +200,8 @@ begin
 
    Boot_Logo;
 
-   Next_Piece := Random_Piece;
+   Reset_Game;
+   Random_Piece (Rnd, Next_Piece);
 
    --  Game loop
    loop
@@ -208,17 +223,13 @@ begin
 
                if Just_Pressed (A) then
                   State := Game_State'Succ (State);
-
-                  Cur_Board := [others => [others => Empty]];
-                  Score := 0;
-                  Level_Nbr := 0;
-                  Line_Counter := 0;
+                  Reset_Game;
                end if;
 
             when New_Piece =>
                --  Add a new piece
                Cur_Piece  := Next_Piece;
-               Next_Piece := Random_Piece;
+               Random_Piece (Rnd, Next_Piece);
 
                Cur_State := Piece_Falling;
                Rotation_Count := 0;
