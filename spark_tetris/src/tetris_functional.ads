@@ -27,7 +27,9 @@
 
 with Interfaces; use Interfaces;
 
-package Tetris_Functional with
+package Tetris_Functional
+with
+  Preelaborate,
   SPARK_Mode
 is
    --  possible content of the board cells
@@ -51,7 +53,7 @@ is
    type Line is array (X_Coord) of Cell;
    type Board is array (Y_Coord) of Line;
 
-   Cur_Board : Board;
+   Cur_Board : Board := [others => [others => Empty]];
 
    --  the current piece has a shape, a direction, and a coordinate for the
    --  top left corner of the square box enclosing the piece:
@@ -71,7 +73,7 @@ is
       Y : PY_Coord;
    end record;
 
-   Cur_Piece : Piece;
+   Cur_Piece : Piece := (I, North, 5, 5);
 
    --  the game loops through the following states:
    --    . a piece is falling, in which case Cur_Piece is set to this piece
@@ -86,7 +88,7 @@ is
                   Board_Before_Clean,
                   Board_After_Clean);
 
-   Cur_State : State;
+   Cur_State : State := Piece_Falling;
 
    --  orientations of shapes are taken from the Super Rotation System at
    --  http://tetris.wikia.com/wiki/SRS

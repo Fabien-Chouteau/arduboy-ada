@@ -5,6 +5,7 @@ with Game_Interface;    use Game_Interface;
 with Spark_Tetris_Config;
 pragma Unreferenced (Spark_Tetris_Config);
 
+
 procedure Spark_Tetris
 with SPARK_Mode => On
 is
@@ -16,10 +17,10 @@ is
                          return Unsigned_32;
    --  Time to wait between each game step
 
-   Level_Nbr    : Unsigned_32 := 0;
-   Score        : Unsigned_32 := 0;
+   Level_Nbr    : Unsigned_32;
+   Score        : Unsigned_32;
 
-   Line_Counter : Unsigned_32 := 0;
+   Line_Counter : Unsigned_32;
    --  Used to compute the level
 
    Nbr_Of_Complete_Lines : Unsigned_32;
@@ -28,7 +29,7 @@ is
    --  Draw on the OLED screen the board and the falling piece
 
    --  Simple random generator.
-   Rnd : Unsigned_32 := 137;
+   Rnd : Unsigned_32;
 
    procedure Random_Piece (Nbr : in out Unsigned_32; P : out Piece)
      with Post => Piece_Within_Board (P);
@@ -36,6 +37,13 @@ is
 
    Next_Piece : Piece;
    --  Next piece to be inserted in the game
+
+   type Game_State is (Pre_Game, New_Piece, Piece_Fall, Game_Over);
+
+   State : Game_State := Game_State'First;
+   Rotation_Count : Natural;
+   Next_Fall : Unsigned_32;
+   Now       : Unsigned_32;
 
    -----------------
    -- Fall_Period --
@@ -184,18 +192,13 @@ is
       Score := 0;
       Level_Nbr := 0;
       Line_Counter := 0;
+      Rotation_Count := 0;
+      Next_Fall := 0;
       Get_Time_Ms (Rnd);
    end Reset_Game;
 
-   type Game_State is (Pre_Game, New_Piece, Piece_Fall, Game_Over);
-
-   State : Game_State := Game_State'First;
    Success : Boolean;
-
-   Rotation_Count : Natural;
-   Next_Fall : Unsigned_32;
-   Now       : Unsigned_32;
-
+   Unused : Boolean;
    B_State : Button_State;
 begin
 
@@ -250,17 +253,23 @@ begin
             if Rotation_Count < 2 then
                if Just_Pressed (B_State, A) then
                   Do_Action (Turn_Counter_Clockwise, Success);
-                  Rotation_Count := Rotation_Count + 1;
+
+                  if Success then
+                     Rotation_Count := Rotation_Count + 1;
+                  end if;
                elsif Just_Pressed (B_State, B) then
                   Do_Action (Turn_Clockwise, Success);
-                  Rotation_Count := Rotation_Count + 1;
+
+                  if Success then
+                     Rotation_Count := Rotation_Count + 1;
+                  end if;
                end if;
             end if;
 
             if Just_Pressed (B_State, Left) then
-               Do_Action (Move_Left, Success);
+               Do_Action (Move_Left, Unused);
             elsif Just_Pressed (B_State, Right) then
-               Do_Action (Move_Right, Success);
+               Do_Action (Move_Right, Unused);
             end if;
 
             if Now >= Next_Fall then
